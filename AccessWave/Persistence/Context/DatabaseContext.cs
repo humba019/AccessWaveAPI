@@ -14,6 +14,7 @@ namespace AccessWave.Persistence.Context
         public DbSet<Education> Education { get; set; }
         public DbSet<Control> Control { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<Device> Device { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Access> Access { get; set; }
@@ -31,7 +32,8 @@ namespace AccessWave.Persistence.Context
             builder.Entity<Rule>().Property(r => r.Description).IsRequired();
 
             builder.Entity<Rule>().HasData(
-                new Rule { Code =  1, Type = "STUDENT", Description = "Limited actions/views for Students." }
+                new Rule { Code =  1, Type = "STUDENT", Description = "Limited actions/views for Students." },
+                new Rule { Code = 2, Type = "EMPLOYEE", Description = "Limited actions/views for Employees." }
             );
 
             builder.Entity<Period>().ToTable("PERIOD");
@@ -75,17 +77,31 @@ namespace AccessWave.Persistence.Context
             builder.Entity<User>().Property(c => c.CodeRule).IsRequired();
 
             builder.Entity<User>().HasData(
-                new User { UserName = "humba", UserPass = "12345", FullName = "Humberto Barreto", LastAccess = DateTime.Now.ToString(), CodeRule = 1 }
+                new User { UserName = "humba", UserPass = "12345", FullName = "Humberto Barreto", LastAccess = DateTime.Now.ToString(), CodeRule = 1 },
+                new User { UserName = "jorge", UserPass = "12345", FullName = "Jorge Ben", LastAccess = DateTime.Now.ToString(), CodeRule = 2 }
+            );
+
+            builder.Entity<Device>().ToTable("DEVICE");
+            builder.Entity<Device>().HasKey(e => e.Code);
+            builder.Entity<Device>().Property(e => e.Code).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Device>().Property(e => e.UserName).IsRequired();
+            builder.Entity<Device>().Property(e => e.UserName).IsRequired();
+            builder.Entity<Device>().Property(e => e.UserName).IsRequired();
+            builder.Entity<Device>().Property(e => e.UserName).IsRequired();
+            builder.Entity<Device>().Property(e => e.UserName).IsRequired();
+
+            builder.Entity<Device>().HasData(
+                new Device { Code = 1, FirstBlock = "0x44", SecondBlock = "0xFC", ThirdBlock = "0xFC", FourthBlock = "0x22", UserName = "humba" }
             );
 
             builder.Entity<Employee>().ToTable("EMPLOYEE");
             builder.Entity<Employee>().HasKey(e => e.Code);
-            builder.Entity<Employee>().Property(e => e.Code).IsRequired();
-            builder.Entity<Employee>().Property(e => e.User).IsRequired();
-            builder.Entity<Employee>().Property(e => e.Period).IsRequired();
+            builder.Entity<Employee>().Property(e => e.Code).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Employee>().Property(e => e.UserName).IsRequired();
+            builder.Entity<Employee>().Property(e => e.CodePeriod).IsRequired();
 
             builder.Entity<Employee>().HasData(
-                new Employee { Code = 1, UserName = "humba", CodePeriod = 1 }
+                new Employee { Code = 1, UserName = "jorge", CodePeriod = 1 }
             );
 
             builder.Entity<Student>().ToTable("STUDENT");
@@ -101,15 +117,15 @@ namespace AccessWave.Persistence.Context
 
             builder.Entity<Access>().ToTable("ACCESS");
             builder.Entity<Access>().HasKey(a => a.Code);
-            builder.Entity<Access>().Property(a => a.Code).IsRequired();
+            builder.Entity<Access>().Property(a => a.Code).IsRequired().ValueGeneratedOnAdd();
             builder.Entity<Access>().Property(a => a.Entry).IsRequired();
             builder.Entity<Access>().Property(a => a.Exit).IsRequired();
-            builder.Entity<Access>().Property(a => a.CodeEmployee).IsRequired();
+            builder.Entity<Access>().Property(a => a.CodeDevice).IsRequired();
             builder.Entity<Access>().Property(a => a.CodeStudent).IsRequired();
             builder.Entity<Access>().Property(a => a.CodeControl).IsRequired();
 
             builder.Entity<Access>().HasData(
-                new Access { Code = 1, Entry = DateTime.Now.ToString(), Exit = DateTime.Now.AddHours(8).ToString(), CodeEmployee = 1, CodeStudent = 1, CodeControl = 1 }
+                new Access { Code = 1, Entry = DateTime.Now.ToString(), Exit = "Waiting", CodeDevice = 1, CodeStudent = 1, CodeControl = 1 }
             );
 
         }

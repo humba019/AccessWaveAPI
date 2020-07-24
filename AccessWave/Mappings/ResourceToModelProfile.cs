@@ -14,6 +14,7 @@ namespace AccessWave.Mappings
         {
             CreateMap<SaveAccessResource, Access>();
             CreateMap<SaveControlResource, Control>();
+            CreateMap<SaveDeviceResource, Device>();
             CreateMap<SaveEducationResource, Education>();
             CreateMap<SaveEmployeeResource, Employee>();
             CreateMap<SavePeriodResource, Period>();

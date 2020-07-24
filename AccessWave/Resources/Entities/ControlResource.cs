@@ -8,7 +8,8 @@ namespace AccessWave.Resources.Entities
     public class ControlResource
     {
         public int Code { get; set; }
-        public string Level { get; set; }
         public string Description { get; set; }
+        public string Entry { get; set; }
+        public string Exit { get; set; }
     }
 }

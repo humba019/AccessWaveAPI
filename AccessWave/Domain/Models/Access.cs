@@ -10,10 +10,9 @@ namespace AccessWave.Domain.Models
         public int Code { get; set; }
         public string Entry { get; set; }
         public string Exit { get; set; }
-        public int CodeEmployee { get; set; }
-        public Employee Employee { get; set; }
         public int CodeStudent { get; set; }
-        public Student Student { get; set; }
+        public int CodeDevice { get; set; }
+        public Device Device { get; set; }
         public int CodeControl { get; set; }
         public Control Control { get; set; }
 

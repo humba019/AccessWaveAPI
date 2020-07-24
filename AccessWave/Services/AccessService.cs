@@ -12,12 +12,35 @@ namespace AccessWave.Services
     public class AccessService : IAccessService
     {
         public readonly IAccessRepository _accessRepository;
+        public readonly IDeviceRepository _deviceRepository;
         public readonly IUnitOfWork _unitOfWork;
 
-        public AccessService(IAccessRepository accessRepository, IUnitOfWork unitOfWork)
+        public AccessService(IAccessRepository accessRepository, IDeviceRepository deviceRepository, IUnitOfWork unitOfWork)
         {
             this._accessRepository = accessRepository;
+            this._deviceRepository = deviceRepository;
             this._unitOfWork = unitOfWork;
+        }
+
+        public async Task<AccessResponse> AuthAsync(int code)
+        {
+            try
+            {
+                var exist = await _deviceRepository.FindByIdAsync(code);
+                if( exist == null)
+                {
+                    return new AccessResponse($"Device {code} not found");
+                }
+
+                Access access = await _accessRepository.AuthByDeviceAsync(exist.Code);
+                await _unitOfWork.CompleteAsync();
+
+                return new AccessResponse(access);
+            }
+            catch (Exception e)
+            {
+                return new AccessResponse($"An error occurred when deleting the access: { e.Message }");
+            }
         }
 
         public async Task<AccessResponse> DeleteAsync(int code)
@@ -38,7 +61,22 @@ namespace AccessWave.Services
             }
         }
 
-        public async Task<IEnumerable<Access>> ListAsync()
+        public async Task<AccessResponse> FindAsync(int code)
+        {
+            try
+            {
+                var exist = await _accessRepository.FindByIdAsync(code);
+                AccessResponse response = exist == null ? new AccessResponse($"Access {code} not found") : new AccessResponse(exist);
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new AccessResponse($"An error occurred when deleting the access: { e.Message }");
+            }
+        }
+
+        public async Task<List<Access>> ListAsync()
         {
             return await _accessRepository.ListAsync();
         }
@@ -69,7 +107,7 @@ namespace AccessWave.Services
 
                 exist.CodeStudent = access.CodeStudent != 0 ? access.CodeStudent : exist.CodeStudent;
 
-                exist.CodeEmployee = access.CodeEmployee != 0 ? access.CodeEmployee : exist.CodeEmployee;
+                exist.CodeDevice = access.CodeDevice != 0 ? access.CodeDevice : exist.CodeDevice;
 
                 _accessRepository.Update(exist);
                 await _unitOfWork.CompleteAsync();

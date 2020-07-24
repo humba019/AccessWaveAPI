@@ -13,9 +13,7 @@ namespace AccessWave.Resources
         [Required]
         public string Exit { get; set; }
         [Required]
-        public int CodeEmployee { get; set; }
-        [Required]
-        public int CodeStudent { get; set; }
+        public int CodeDevice { get; set; }
         [Required]
         public int CodeControl { get; set; }
     }
