@@ -13,6 +13,6 @@ namespace AccessWave.Resources.Entities
         public string SecondBlock { get; set; }
         public string ThirdBlock { get; set; }
         public string FourthBlock { get; set; }
-        public string UserName { get; set; }
+        public UserResource User { get; set; }
     }
 }

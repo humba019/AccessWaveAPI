@@ -23,7 +23,7 @@ namespace AccessWave.Persistence.Repositories
             return await _context.Control.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Control>> ListAsync()
+        public async Task<List<Control>> ListAsync()
         {
             return await _context.Control.ToListAsync();
         }

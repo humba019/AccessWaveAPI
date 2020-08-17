@@ -49,7 +49,7 @@ namespace AccessWave.Services
             }
             catch (Exception e)
             {
-                return new DeviceResponse($"An error occurred when deleting the access: { e.Message }");
+                return new DeviceResponse($"An error occurred when finding the access: { e.Message }");
             }
         }
 

@@ -12,6 +12,7 @@ namespace AccessWave.Mappings
     {
         public ModelToResourceProfile()
         {
+            CreateMap<AccessLog, AccessLogResource>();
             CreateMap<Access, AccessResource>();
             CreateMap<Control, ControlResource>();
             CreateMap<Device, DeviceResource>();

@@ -2091,6 +2091,15 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "TimeZoneConverter/3.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/TimeZoneConverter.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/TimeZoneConverter.dll": {}
+        }
       }
     }
   },
@@ -7291,6 +7300,33 @@
         "system.xml.xmlserializer.4.3.0.nupkg.sha512",
         "system.xml.xmlserializer.nuspec"
       ]
+    },
+    "TimeZoneConverter/3.2.0": {
+      "sha512": "f0UpF9H+ylj3qjO/l2+Yt0R77FFR327efJwsoXAys6J1fSYFcQPrPVhaGVVWoN79+PVutj0qzj79kuhSPN70gA==",
+      "type": "package",
+      "path": "timezoneconverter/3.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net35/TimeZoneConverter.dll",
+        "lib/net35/TimeZoneConverter.xml",
+        "lib/net40/TimeZoneConverter.dll",
+        "lib/net40/TimeZoneConverter.xml",
+        "lib/net45/TimeZoneConverter.dll",
+        "lib/net45/TimeZoneConverter.xml",
+        "lib/net461/TimeZoneConverter.dll",
+        "lib/net461/TimeZoneConverter.xml",
+        "lib/net471/TimeZoneConverter.dll",
+        "lib/net471/TimeZoneConverter.xml",
+        "lib/netstandard1.1/TimeZoneConverter.dll",
+        "lib/netstandard1.1/TimeZoneConverter.xml",
+        "lib/netstandard1.3/TimeZoneConverter.dll",
+        "lib/netstandard1.3/TimeZoneConverter.xml",
+        "lib/netstandard2.0/TimeZoneConverter.dll",
+        "lib/netstandard2.0/TimeZoneConverter.xml",
+        "timezoneconverter.3.2.0.nupkg.sha512",
+        "timezoneconverter.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
@@ -7303,7 +7339,8 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 3.1.6",
       "Microsoft.Extensions.DependencyInjection >= 3.1.6",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.10.8",
-      "System.Data.SqlClient >= 4.8.1"
+      "System.Data.SqlClient >= 4.8.1",
+      "TimeZoneConverter >= 3.2.0"
     ]
   },
   "packageFolders": {
@@ -7378,6 +7415,10 @@
           "System.Data.SqlClient": {
             "target": "Package",
             "version": "[4.8.1, )"
+          },
+          "TimeZoneConverter": {
+            "target": "Package",
+            "version": "[3.2.0, )"
           }
         },
         "imports": [

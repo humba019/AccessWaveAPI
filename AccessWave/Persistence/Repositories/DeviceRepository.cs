@@ -13,9 +13,21 @@ namespace AccessWave.Persistence.Repositories
     {
         public DeviceRepository(DatabaseContext context) : base(context){}
 
-        public async Task AddAsync(Device device)
+        public async Task<Device> AddAsync(Device device)
         {
-            await _context.Device.AddAsync(device);
+            Device deviceOut = new Device();
+            foreach(Device deviceIn in await _context.Device.ToListAsync()) 
+            {
+                string firstKey = deviceIn.FirstBlock + "" + deviceIn.SecondBlock + "" + deviceIn.ThirdBlock + "" + deviceIn.FourthBlock;
+                string secondKey = device.FirstBlock + "" + device.SecondBlock + "" + device.ThirdBlock + "" + device.FourthBlock;
+                if (firstKey != secondKey)
+                {
+                    device.UserName = "default";
+                    await _context.Device.AddAsync(device);
+                    deviceOut = device;
+                }
+            }
+            return deviceOut;
         }
 
         public async Task<Device> FindByIdAsync(int id)

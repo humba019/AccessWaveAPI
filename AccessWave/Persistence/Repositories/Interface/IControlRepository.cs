@@ -8,7 +8,7 @@ namespace AccessWave.Persistence.Repositories.Interface
 {
     public interface IControlRepository
     {
-        Task<IEnumerable<Control>> ListAsync();
+        Task<List<Control>> ListAsync();
         Task AddAsync(Control control);
         Task<Control> FindByIdAsync(int id);
         void Update(Control control);

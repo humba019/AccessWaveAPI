@@ -51,16 +51,53 @@ namespace AccessWave.Controllers
         [HttpGet("auth")]
         public async Task<ActionResult<AccessResource>> AuthAsync([System.Web.Http.FromUri]Device device)
         {
-            var result = await _accessService.AuthAsync(device.Code);
+            var timeLista = TimeZoneInfo.GetSystemTimeZones();
+            Console.WriteLine(timeLista);
+            int code = 0;
+            device.FirstBlock = Convert.ToInt32(device.FirstBlock).ToString("X");
+            device.SecondBlock = Convert.ToInt32(device.SecondBlock).ToString("X");
+            device.ThirdBlock = Convert.ToInt32(device.ThirdBlock).ToString("X");
+            device.FourthBlock = Convert.ToInt32(device.FourthBlock).ToString("X");
 
-            if (!result.Success)
+            foreach (Access access in await _accessService.ListAsync())
             {
-                return BadRequest(result.Message);
+                string firstKey = access.Device.FirstBlock + "" + access.Device.SecondBlock + "" + access.Device.ThirdBlock + "" + access.Device.FourthBlock;
+                string secondKey = device.FirstBlock + "" + device.SecondBlock + "" + device.ThirdBlock + "" + device.FourthBlock;
+                if (firstKey == secondKey)
+                {
+                    code = access.Device.Code;
+                }
             }
+            if (code.Equals(0))
+            {
+                Device deviceIn = new Device { FirstBlock = device.FirstBlock, SecondBlock = device.SecondBlock, ThirdBlock = device.ThirdBlock, FourthBlock = device.FourthBlock, UserName = device.UserName};
 
-            var resource = _mapper.Map<Access, AccessResource>(result.Access);
+                var result = await _accessService.FisrtReadAsync(deviceIn);
 
-            return Ok(resource);
+
+                if (!result.Success)
+                {
+                    return BadRequest(result.Message);
+                }
+
+                var resource = _mapper.Map<Access, AccessResource>(result.Access);
+
+                return Ok(resource);
+            }
+            else {
+            
+                var result = await _accessService.AuthAsync(code);
+
+
+                if (!result.Success)
+                {
+                    return BadRequest(result.Message);
+                }
+
+                var resource = _mapper.Map<Access, AccessResource>(result.Access);
+
+                return Ok(resource);
+            }
         }
     }
 }

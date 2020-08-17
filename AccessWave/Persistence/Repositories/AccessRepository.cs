@@ -1,12 +1,15 @@
 ﻿using AccessWave.Domain.Models;
+using AccessWave.Extensions;
 using AccessWave.Persistence.Context;
 using AccessWave.Persistence.Repositories.Interface;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using TimeZoneConverter;
 
 namespace AccessWave.Persistence.Repositories
 {
@@ -16,46 +19,79 @@ namespace AccessWave.Persistence.Repositories
 
         public async Task AddAsync(Access access)
         {
-            await _context.Access.AddAsync(access);
+            CultureInfo ci = new CultureInfo("en-US");
+            TimeZoneInfo hrBrasilia = TZConvert.GetTimeZoneInfo("E. South America Standard Time");
+            if (access.CodeDevice != 0)
+            {
+                access.Device = await _context.Device.FindAsync(access.CodeDevice);
+                access.Device.User = await _context.User.FindAsync(access.Device.UserName);
+                access.Device.User.Rule = await _context.Rule.FindAsync(access.Device.User.CodeRule);
+            }
+            if (access.CodeControl != 0)
+            {
+                access.Control = await _context.Control.FindAsync(access.CodeControl);
+            }
+
+            foreach(Access accessIn in await _context.Access.ToListAsync())
+            {
+                string firstKey = accessIn.Device.FirstBlock + "" + accessIn.Device.SecondBlock + "" + accessIn.Device.ThirdBlock + "" + accessIn.Device.FourthBlock;
+                string secondKey = access.Device.FirstBlock + "" + access.Device.SecondBlock + "" + access.Device.ThirdBlock + "" + access.Device.FourthBlock;
+                if (firstKey != secondKey)
+                {
+                    await _context.Access.AddAsync(access);
+                    AccessLog accessLog = new AccessLog { CodeAccess = access.Code, CodeDevice = access.CodeDevice, LastAccess = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString() };
+                    await _context.AccessLog.AddAsync(accessLog);
+                }
+            }
+
         }
 
         public async Task<Access> AuthByDeviceAsync(int codeDevice)
         {
+            CultureInfo ci = new CultureInfo("en-US");
+            TimeZoneInfo hrBrasilia = TZConvert.GetTimeZoneInfo("E. South America Standard Time");
+
             Access access = new Access();
-            foreach (Access accessObj in await _context.Access.ToListAsync())
+            foreach(Access accessIn in await _context.Access.ToListAsync()) 
             {
-                if (accessObj.CodeDevice != codeDevice)
+                if(accessIn.CodeDevice == codeDevice) 
                 {
-                    Device deviceObj = await _context.Device.FindAsync(codeDevice);
-                    if (deviceObj != null)
-                    {
-                        access.CodeDevice = deviceObj.Code;
-                        access.Device = deviceObj;
-                        access.Device.User = await _context.User.FindAsync(deviceObj.UserName);
-                        access.Device.User.Rule = await _context.Rule.FindAsync(deviceObj.User.CodeRule);
-                        foreach (Student student in await _context.Student.ToListAsync())
-                        {
-                            if (student.UserName.Equals(access.Device.UserName))
-                            {
-                                access.CodeStudent = student.Code;
-                            }
-                        }
-
-                        access.Entry = DateTime.Now.ToString();
-                        access.Exit = "Waiting";
-                        access.CodeControl = 1;
-                        access.Control = await _context.Control.FindAsync(1);
-
-                        await _context.Access.AddAsync(access);
-                    }
-                }
-                else
-                {
-                    access = await _context.Access.FindAsync(accessObj.Code);
-                    access.Exit = DateTime.Now.ToString();
-                    this.Update(access);
+                    access = accessIn;
                 }
             }
+            Device deviceOut = await _context.Device.FindAsync(codeDevice);
+            if (access == null)
+            {
+                access.CodeDevice = deviceOut.Code;
+                access.Device = deviceOut;
+                access.Device.User = await _context.User.FindAsync(deviceOut.UserName);
+                access.Device.User.Rule = await _context.Rule.FindAsync(deviceOut.User.CodeRule);
+                access.Entry = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString();
+                access.Exit = "Waiting";
+                access.CodeControl = 1;
+                access.Control = await _context.Control.FindAsync(1);
+
+                if (codeDevice != access.Device.Code)
+                {
+                    await _context.Access.AddAsync(access);
+                }
+                AccessLog accessLog = new AccessLog { CodeAccess = access.Code, CodeDevice = access.CodeDevice, LastAccess = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString() };
+                await _context.AccessLog.AddAsync(accessLog);
+            }
+            else
+            {
+                DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia);
+                DateTime entry = DateTime.Parse(access.Entry, ci);
+                DateTime expired = entry.AddMinutes(2);
+                if (now >= expired) { 
+                    access = await _context.Access.FindAsync(codeDevice);
+                    access.Exit = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString("", ci);
+                    this.Update(access);
+                }
+                AccessLog accessLog = new AccessLog { CodeAccess = access.Code, CodeDevice = access.CodeDevice, LastAccess = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString() };
+                await _context.AccessLog.AddAsync(accessLog);
+            }
+
             return access;
         }
 
@@ -69,13 +105,6 @@ namespace AccessWave.Persistence.Repositories
                     access.Device = await _context.Device.FindAsync(access.CodeDevice);
                     access.Device.User = await _context.User.FindAsync(access.Device.UserName);
                     access.Device.User.Rule = await _context.Rule.FindAsync(access.Device.User.CodeRule);
-                    foreach (Student student in await _context.Student.ToListAsync())
-                    {
-                        if (student.UserName.Equals(access.Device.UserName))
-                        {
-                            access.CodeStudent = student.Code;
-                        }
-                    }
                 }
                 if (access.CodeControl != 0)
                 {
@@ -97,19 +126,11 @@ namespace AccessWave.Persistence.Repositories
                     access.Device = await _context.Device.FindAsync(access.CodeDevice);
                     access.Device.User = await _context.User.FindAsync(access.Device.UserName);
                     access.Device.User.Rule = await _context.Rule.FindAsync(access.Device.User.CodeRule);
-                    foreach (Student student in await _context.Student.ToListAsync())
-                    {
-                        if (student.UserName.Equals(access.Device.UserName))
-                        {
-                            access.CodeStudent = student.Code;
-                        }
-                    }
                 }
                 if (access.CodeControl != 0)
                 {
                     access.Control = await _context.Control.FindAsync(access.CodeControl);
                 }
-
                 list.Add(access);
             }
 

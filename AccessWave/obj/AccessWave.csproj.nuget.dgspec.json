@@ -73,6 +73,10 @@
             "System.Data.SqlClient": {
               "target": "Package",
               "version": "[4.8.1, )"
+            },
+            "TimeZoneConverter": {
+              "target": "Package",
+              "version": "[3.2.0, )"
             }
           },
           "imports": [

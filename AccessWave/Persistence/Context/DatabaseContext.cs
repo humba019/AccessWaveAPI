@@ -1,14 +1,18 @@
 ﻿using AccessWave.Domain.Models;
+using AccessWave.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using TimeZoneConverter;
 
 namespace AccessWave.Persistence.Context
 {
     public class DatabaseContext : DbContext
     {
+
         public DbSet<Rule> Rule { get; set; }
         public DbSet<Period> Period { get; set; }
         public DbSet<Education> Education { get; set; }
@@ -18,12 +22,15 @@ namespace AccessWave.Persistence.Context
         public DbSet<Student> Student { get; set; }
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Access> Access { get; set; }
+        public DbSet<AccessLog> AccessLog { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            CultureInfo ci = new CultureInfo("en-US");
+            TimeZoneInfo hrBrasilia = TZConvert.GetTimeZoneInfo("E. South America Standard Time");
 
             builder.Entity<Rule>().ToTable("RULE");
             builder.Entity<Rule>().HasKey(r => r.Code);
@@ -33,7 +40,9 @@ namespace AccessWave.Persistence.Context
 
             builder.Entity<Rule>().HasData(
                 new Rule { Code =  1, Type = "STUDENT", Description = "Limited actions/views for Students." },
-                new Rule { Code = 2, Type = "EMPLOYEE", Description = "Limited actions/views for Employees." }
+                new Rule { Code = 2, Type = "EMPLOYEE", Description = "Limited actions/views for Employees." },
+                new Rule { Code = 3, Type = "VISTOR", Description = "Limited actions/views for Vistors." },
+                new Rule { Code = 4, Type = "DEFAULT", Description = "Limited actions/views for Default Tag Adding Process." }
             );
 
             builder.Entity<Period>().ToTable("PERIOD");
@@ -44,7 +53,7 @@ namespace AccessWave.Persistence.Context
             builder.Entity<Period>().Property(p => p.End).IsRequired();
 
             builder.Entity<Period>().HasData(
-                new Period { Code = 1, Description = "Limited actions/views for Students.", Start = DateTime.Now.ToString(), End = DateTime.Now.AddHours(8).ToString() }
+                new Period { Code = 1, Description = "Limited actions/views for Students.", Start = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString("", ci), End = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddHours(8), hrBrasilia).ToString() }
             );
 
             builder.Entity<Education>().ToTable("EDUCATION");
@@ -65,7 +74,7 @@ namespace AccessWave.Persistence.Context
             builder.Entity<Control>().Property(c => c.Exit).IsRequired();
 
             builder.Entity<Control>().HasData(
-                new Control { Code = 1, Description = "Diurnal Control", Entry = DateTime.Now.ToString(), Exit = DateTime.Now.AddHours(8).ToString() }
+                new Control { Code = 1, Description = "Diurnal Control", Entry = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString(), Exit = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddHours(8), hrBrasilia).ToString("", ci) }
             );
 
             builder.Entity<User>().ToTable("USER");
@@ -77,8 +86,9 @@ namespace AccessWave.Persistence.Context
             builder.Entity<User>().Property(c => c.CodeRule).IsRequired();
 
             builder.Entity<User>().HasData(
-                new User { UserName = "humba", UserPass = "12345", FullName = "Humberto Barreto", LastAccess = DateTime.Now.ToString(), CodeRule = 1 },
-                new User { UserName = "jorge", UserPass = "12345", FullName = "Jorge Ben", LastAccess = DateTime.Now.ToString(), CodeRule = 2 }
+                new User { UserName = "humba", UserPass = "12345", FullName = "Humberto Barreto", LastAccess = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString("", ci), CodeRule = 1 },
+                new User { UserName = "jorge", UserPass = "12345", FullName = "Jorge Ben", LastAccess = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString("", ci), CodeRule = 2 },
+                new User { UserName = "default", UserPass = "12345", FullName = "Default Tag Adding Process", LastAccess = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString("", ci), CodeRule = 4 }
             );
 
             builder.Entity<Device>().ToTable("DEVICE");
@@ -91,7 +101,7 @@ namespace AccessWave.Persistence.Context
             builder.Entity<Device>().Property(e => e.UserName).IsRequired();
 
             builder.Entity<Device>().HasData(
-                new Device { Code = 1, FirstBlock = "0x44", SecondBlock = "0xFC", ThirdBlock = "0xFC", FourthBlock = "0x22", UserName = "humba" }
+                new Device { Code = 1, FirstBlock = "44", SecondBlock = "FC", ThirdBlock = "FC", FourthBlock = "22", UserName = "humba" }
             );
 
             builder.Entity<Employee>().ToTable("EMPLOYEE");
@@ -121,13 +131,23 @@ namespace AccessWave.Persistence.Context
             builder.Entity<Access>().Property(a => a.Entry).IsRequired();
             builder.Entity<Access>().Property(a => a.Exit).IsRequired();
             builder.Entity<Access>().Property(a => a.CodeDevice).IsRequired();
-            builder.Entity<Access>().Property(a => a.CodeStudent).IsRequired();
             builder.Entity<Access>().Property(a => a.CodeControl).IsRequired();
 
             builder.Entity<Access>().HasData(
-                new Access { Code = 1, Entry = DateTime.Now.ToString(), Exit = "Waiting", CodeDevice = 1, CodeStudent = 1, CodeControl = 1 }
+                new Access { Code = 1, Entry = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString("", ci), Exit = "Waiting", CodeDevice = 1, CodeControl = 1 }
             );
 
+
+            builder.Entity<AccessLog>().ToTable("ACCESSLOGS");
+            builder.Entity<AccessLog>().HasKey(a => a.Code);
+            builder.Entity<AccessLog>().Property(a => a.Code).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<AccessLog>().Property(a => a.CodeAccess).IsRequired();
+            builder.Entity<AccessLog>().Property(a => a.CodeDevice).IsRequired();
+            builder.Entity<AccessLog>().Property(a => a.LastAccess).IsRequired();
+
+            builder.Entity<AccessLog>().HasData(
+                new AccessLog { Code = 1, CodeAccess = 1, CodeDevice = 1, LastAccess = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hrBrasilia).ToString("", ci) }
+            );
         }
     }
 }

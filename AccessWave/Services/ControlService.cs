@@ -38,7 +38,22 @@ namespace AccessWave.Services
             }
         }
 
-        public async Task<IEnumerable<Control>> ListAsync()
+        public async Task<ControlResponse> FindAsync(int code)
+        {
+            try
+            {
+                var exist = await _controlRepository.FindByIdAsync(code);
+                ControlResponse response = exist == null ? new ControlResponse($"Control {code} not found") : new ControlResponse(exist);
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ControlResponse($"An error occurred when finding the control: { e.Message }");
+            }
+        }
+
+            public async Task<List<Control>> ListAsync()
         {
             return await _controlRepository.ListAsync();
         }

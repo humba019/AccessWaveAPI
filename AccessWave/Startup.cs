@@ -17,6 +17,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace AccessWave
 {
@@ -37,6 +39,7 @@ namespace AccessWave
             });
 
             services.AddScoped<IAccessRepository, AccessRepository>();
+            services.AddScoped<IAccessLogRepository, AccessLogRepository>();
             services.AddScoped<IControlRepository, ControlRepository>();
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IEducationRepository, EducationRepository>();
@@ -70,16 +73,24 @@ namespace AccessWave
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

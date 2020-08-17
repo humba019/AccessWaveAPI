@@ -9,7 +9,7 @@ namespace AccessWave.Persistence.Repositories.Interface
     public interface IDeviceRepository
     {
         Task<List<Device>> ListAsync();
-        Task AddAsync(Device device);
+        Task<Device> AddAsync(Device device);
         Task<Device> FindByIdAsync(int id);
         void Update(Device device);
         void Remove(Device device);

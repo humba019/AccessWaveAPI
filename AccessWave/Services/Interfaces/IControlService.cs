@@ -9,7 +9,8 @@ namespace AccessWave.Services.Interfaces
 {
     public interface IControlService
     {
-        Task<IEnumerable<Control>> ListAsync();
+        Task<List<Control>> ListAsync();
+        Task<ControlResponse> FindAsync(int code);
         Task<ControlResponse> SaveAsync(Control control);
         Task<ControlResponse> UpdateAsync(int code, Control control);
         Task<ControlResponse> DeleteAsync(int code);

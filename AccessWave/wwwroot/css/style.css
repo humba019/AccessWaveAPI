@@ -1,0 +1,193 @@
+﻿
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #cccccc;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #3b3b3b;
+}
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #1f1f1f;
+    }
+
+body {
+    font-family: sans-serif;
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#access {
+    width: 95%;
+    height: 100%;
+    margin: auto;
+    margin-top: 6vh;
+}
+
+#access_name {
+    width: 100%;
+    height: 5vh;
+    font-size: 25pt;
+    text-align: center;
+    padding: 1.2vh 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: #fff;
+    background-image: linear-gradient(to left, #0094f0, #0071b8);
+}
+
+#access_finded {
+    width: 100% !important;
+    height: 79.1vh;
+    margin-right: 0px !important;
+    background-color: #fff;
+    overflow-y: scroll;
+    overflow-x: hidden !important;
+}
+
+    #access_finded div {
+        width: 20% !important;
+        height: auto;
+        display: inline-block;
+        margin-left: 10px !important;
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
+        box-shadow: 0 0 0.5em #000;
+        /*
+            box-shadow: 0 0 0.5em #ba0000;
+            box-shadow: 0 0 0.5em #13ba00;
+            */
+        background-color: #fff;
+        border-radius: 10px 10px 60px 10px;
+    }
+
+        #access_finded div div {
+            width: 100% !important;
+            margin-left: 0px !important;
+            height: auto;
+            padding: 0px;
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            display: block !important;
+            box-shadow: 0 0 0em #1a1919;
+            border-radius: 10px 10px 60px 10px;
+        }
+
+            #access_finded div div img {
+                width: 100px;
+                height: 100px;
+                padding: 10px;
+                margin: auto;
+                display: block;
+                border-radius: 50%;
+            }
+
+            #access_finded div div h1 {
+                color: #919191;
+                position: relative;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 15pt;
+                word-wrap: break-word;
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+
+            #access_finded div div h3 {
+                color: #5c5c5c;
+                position: relative;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 14pt;
+                word-wrap: break-word;
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+
+            #access_finded div div p {
+                color: #3b3e40;
+                padding: 8.5px 10px;
+                font-weight: bold;
+                word-wrap: break-word;
+                text-align: center;
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+
+@media screen and (max-width: 500px) {
+    #access {
+        width: 100%;
+        height: 100%;
+        margin: auto;
+        margin-top: 6vh;
+    }
+
+    #access_name {
+        width: 100%;
+        height: 5vh;
+        text-align: left;
+        padding: 2vh 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        color: #5c5c5c;
+        background-image: linear-gradient(to left, #171717, #212121, #333333);
+    }
+
+    #access_finded {
+        width: 100% !important;
+        height: 79vh;
+        margin-right: 0px !important;
+        background-image: linear-gradient(to bottom, #a52a2a, #c72020, #d11b1b);
+        overflow-y: scroll;
+        overflow-x: hidden !important;
+    }
+
+        #access_finded div {
+            width: 50% !important;
+            margin-right: 0px !important;
+            height: auto;
+            display: block;
+            margin-left: 50%;
+            margin-top: 10px !important;
+            margin-bottom: 10px !important;
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+            box-shadow: 0 0 0.5em #1a1919;
+            background-color: #fff;
+            border-radius: 10px 10px 60px 10px;
+        }
+
+            #access_finded div div h1 {
+                color: #5c5c5c;
+                position: relative;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 15pt;
+                word-wrap: break-word;
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+
+            #access_finded div div p {
+                color: #c1c1c1;
+                padding: 5px 10px;
+                font-weight: bold;
+                word-wrap: break-word;
+                text-align: right;
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+}

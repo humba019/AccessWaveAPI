@@ -11,8 +11,8 @@ namespace AccessWave.Resources.Entities
         public int Code { get; set; }
         public string Entry { get; set; }
         public string Exit { get; set; }
-        public int CodeStudent { get; set; }
         public DeviceResource Device { get; set; }
         public ControlResource Control { get; set; }
+        public List<AccessLogResource> AccessLogs { get; set; }
     }
 }
